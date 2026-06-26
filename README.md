@@ -4,7 +4,7 @@
 
 ### Visão Geral (English below this section) 
 
-Este projeto constrói um modelo de machine learning para prever os resultados dos jogos da Copa do Mundo 2026 (vitória, empate ou derrota). O modelo é treinado com dados históricos de partidas entre seleções nacionais e é avaliado retroativamente com os jogos reais da Copa que já aconteceram.
+Oiiiieee!! Este projeto constrói um modelo de machine learning para prever os resultados dos jogos da Copa do Mundo 2026 (vitória, empate ou derrota). O modelo é treinado com dados históricos de partidas entre seleções nacionais e é avaliado retroativamente com os jogos reais da Copa que já aconteceram.
 
 ---
 
@@ -24,7 +24,7 @@ Os dados foram obtidos do Kaggle, do dataset público de [Mart Jürisoo](https:/
 
 **Incorporação de pênaltis:** O `results.csv` registra apenas o placar do tempo regulamentar. Em jogos eliminatórios que terminam empatados e vão para os pênaltis, é necessário saber quem realmente avançou. O `shootouts.csv` fornece essa informação, e criamos uma coluna `winner` que reflete o vencedor real de cada partida.
 
-**Filtragem por times:** Somente partidas envolvendo os 48 times classificados para a Copa 2026 foram mantidas. Dados de times que nem participam do torneio não contribuem para as previsões — seria apenas ruído. A lista de times foi extraída diretamente do dataset (a partir dos jogos reais da Copa 2026), e não de uma fonte externa, para evitar erros.
+**Filtragem por times:** Somente partidas envolvendo os 48 times classificados para a Copa 2026 foram mantidas. Dados de times que nem participam do torneio não contribuem para as previsões, seria apenas 'noise'. A lista de times foi extraída diretamente do dataset (a partir dos jogos reais da Copa 2026), e não de uma fonte externa, para evitar erros.
 
 **Divisão em três conjuntos:**
 - `train` — todas as partidas históricas antes de 2023 (base de treinamento)
@@ -52,7 +52,7 @@ Uma preocupação inicial foi que dados muito antigos distorceriam o modelo, já
 
 ### Engenharia de Atributos
 
-Para cada partida, construímos os seguintes atributos baseados no histórico de treinamento de cada time (sempre calculados **apenas** com dados de `train`, nunca com dados futuros):
+Para cada partida, construí os seguintes atributos baseados no histórico de treinamento de cada time (sempre calculados **apenas** com dados de `train`, nunca com dados futuros):
 
 | Atributo | Descrição |
 |---|---|
@@ -76,12 +76,12 @@ O primeiro modelo foi um **Random Forest** com os atributos básicos. O resultad
 
 **Problemas identificados:**
 
-1. **Empates quase nunca eram previstos.** Dos 72 jogos da Copa no conjunto de teste, 38 terminaram empatados (53%). O modelo captava apenas 5% deles. Empates são difíceis de prever porque os atributos médios dos dois times acabam sendo similares — exatamente quando um empate é mais provável.
+1. **Empates quase nunca eram previstos.** Dos 72 jogos da Copa no conjunto de teste, 38 terminaram empatados (53%). O modelo captava apenas 5% deles. Empates são difíceis de prever porque os atributos médios dos dois times acabam sendo similares, exatamente quando um empate é mais provável.
 
-2. **Confusão entre mando de campo e campo neutro.** O conjunto de treinamento inclui partidas com mandante real, onde o fator casa é significativo. Os jogos da Copa, porém, são todos em campo neutro. O modelo aprendia um padrão (vantagem do mandante) que simplesmente não existe no torneio.
+2. **Confusão entre mando de campo e campo neutro.** O conjunto de treinamento inclui partidas com mandante real, onde o fator casa é significativo. Mas os jogos da Copa são todos em campo neutro. O modelo aprendia um padrão (vantagem do mandante) que simplesmente não existe no torneio.
 
 #### Tentativa 2: XGBoost com Retreinamento Incremental
-Trocamos o Random Forest pelo **XGBoost** e adicionamos o retreinamento incremental por rodada: após cada rodada da Copa, os resultados são incorporados ao treinamento e o modelo é retreinado antes de prever a próxima rodada.
+Troquei o Random Forest pelo **XGBoost** e adicionamos o retreinamento incremental por rodada: após cada rodada da Copa, os resultados são incorporados ao treinamento e o modelo é retreinado antes de prever a próxima rodada.
 
 Isso trouxe uma melhora real. O melhor resultado foi **60% na Rodada 2** — acima da média de modelos profissionais de previsão de futebol (50–55%).
 
@@ -156,7 +156,7 @@ Data was sourced from Kaggle, specifically [Mart Jürisoo's public dataset](http
 
 **Name normalization:** Some countries have renamed over time. Without this mapping, DR Congo's match history would be split between "Zaire" (old games) and "DR Congo" (recent ones), effectively treating them as two different teams. The `former_names.csv` resolves this.
 
-**Incorporating shootouts:** `results.csv` only records the 90-minute score. In knockout games that go to penalties, we need to know who actually advanced. We merged `shootouts.csv` to create a `winner` column reflecting the true match winner.
+**Incorporating shootouts:** `results.csv` only records the 90-minute score. In knockout games that go to penalties, I need to know who actually advanced. I merged `shootouts.csv` to create a `winner` column reflecting the true match winner.
 
 **Filtering to WC 2026 teams:** Only matches involving the 48 World Cup 2026 teams were kept. The team list was extracted directly from the dataset rather than hardcoded — this turned out to matter since initial search results had the wrong teams (Haiti and Curaçao are in, not Honduras and Costa Rica as initially believed).
 
@@ -215,7 +215,7 @@ The first model was a **Random Forest** with basic features. Result: **36% accur
 2. **Home advantage confound.** The training set includes matches with a real home team, where home advantage is significant. WC games are all on neutral ground. The model was learning a home advantage signal that simply doesn't exist in the tournament.
 
 #### Attempt 2: XGBoost with Incremental Retraining
-We replaced Random Forest with **XGBoost** and added incremental retraining by round: after each completed WC round, those results are added to the training set and the model is retrained before predicting the next round.
+I replaced Random Forest with **XGBoost** and added incremental retraining by round: after each completed WC round, those results are added to the training set and the model is retrained before predicting the next round.
 
 Best result: **60% on Round 2** — above the typical range of professional football prediction models (50–55%).
 
