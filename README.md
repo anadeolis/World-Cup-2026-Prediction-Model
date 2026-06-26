@@ -20,7 +20,7 @@ Os dados foram obtidos do Kaggle, do dataset público de [Mart Jürisoo](https:/
 
 ### Limpeza dos Dados
 
-**Normalização de nomes:** Alguns países mudaram de nome ao longo dos anos. Sem esse mapeamento, a República Democrática do Congo teria o histórico partido em dois — os jogos antigos como "Zaire" e os recentes como "DR Congo". O arquivo `former_names.csv` resolve isso.
+**Normalização de nomes:** Alguns países mudaram de nome ao longo dos anos. Sem esse mapeamento, a República Democrática do Congo teria o histórico partido em dois, os jogos antigos como "Zaire" e os recentes como "DR Congo". O arquivo `former_names.csv` resolve isso.
 
 **Incorporação de pênaltis:** O `results.csv` registra apenas o placar do tempo regulamentar. Em jogos eliminatórios que terminam empatados e vão para os pênaltis, é necessário saber quem realmente avançou. O `shootouts.csv` fornece essa informação, e criamos uma coluna `winner` que reflete o vencedor real de cada partida.
 
@@ -72,7 +72,7 @@ Para cada partida, construí os seguintes atributos baseados no histórico de tr
 ### Processo e Erros ao Longo do Caminho
 
 #### Tentativa 1: Random Forest
-O primeiro modelo foi um **Random Forest** com os atributos básicos. O resultado foi decepcionante: **36% de acurácia** — pouco melhor do que acertar aleatoriamente (33%).
+O primeiro modelo foi um **Random Forest** com os atributos básicos. O resultado foi decepcionante: **36% de acurácia** que é pouco melhor do que acertar aleatoriamente (33%).
 
 **Problemas identificados:**
 
@@ -83,7 +83,7 @@ O primeiro modelo foi um **Random Forest** com os atributos básicos. O resultad
 #### Tentativa 2: XGBoost com Retreinamento Incremental
 Troquei o Random Forest pelo **XGBoost** e adicionamos o retreinamento incremental por rodada: após cada rodada da Copa, os resultados são incorporados ao treinamento e o modelo é retreinado antes de prever a próxima rodada.
 
-Isso trouxe uma melhora real. O melhor resultado foi **60% na Rodada 2** — acima da média de modelos profissionais de previsão de futebol (50–55%).
+Isso trouxe uma melhora real. O melhor resultado foi **60% na Rodada 2** que é acima da média de modelos profissionais de previsão de futebol (50–55%).
 
 **Por que a Rodada 3 foi pior?**
 A fase de grupos da Copa tem uma dinâmica peculiar na terceira rodada: times já classificados poupam jogadores, times já eliminados jogam sem pressão, e às vezes existe interesse mútuo em um empate. Nenhum modelo consegue prever isso com dados históricos.
@@ -112,7 +112,7 @@ Novos atributos adicionados nessa versão: `draw_rate`, `h2h_draw_rate`, `goal_d
 
 ### Próximos Passos
 
-O maior ganho potencial de acurácia ainda não implementado é o **Elo Rating** — um sistema de pontuação dinâmica que atualiza a força de cada seleção após cada jogo. Deve adicionar de 3 a 5 pontos percentuais de acurácia.
+O maior ganho potencial de acurácia ainda não implementado é o **Elo Rating**, um sistema de pontuação dinâmica que atualiza a força de cada seleção após cada jogo. Deve adicionar de 3 a 5 pontos percentuais de acurácia.
 
 Outros possíveis aprimoramentos:
 - Regressão de Poisson combinada com XGBoost em ensemble
@@ -158,7 +158,7 @@ Data was sourced from Kaggle, specifically [Mart Jürisoo's public dataset](http
 
 **Incorporating shootouts:** `results.csv` only records the 90-minute score. In knockout games that go to penalties, I need to know who actually advanced. I merged `shootouts.csv` to create a `winner` column reflecting the true match winner.
 
-**Filtering to WC 2026 teams:** Only matches involving the 48 World Cup 2026 teams were kept. The team list was extracted directly from the dataset rather than hardcoded — this turned out to matter since initial search results had the wrong teams (Haiti and Curaçao are in, not Honduras and Costa Rica as initially believed).
+**Filtering to WC 2026 teams:** Only matches involving the 48 World Cup 2026 teams were kept. The team list was extracted directly from the dataset rather than hardcoded which turned out to matter since initial search results had the wrong teams (Haiti and Curaçao are in, not Honduras and Costa Rica as initially believed).
 
 **Three-way split:**
 - `train` — all historical matches before 2023 (training base)
@@ -170,7 +170,7 @@ Data was sourced from Kaggle, specifically [Mart Jürisoo's public dataset](http
 ### Key Data Decisions
 
 **Why keep all historical data instead of just the last 20 years?**
-An early concern was that data from decades ago would distort the model since squads change completely over time. The solution was to keep all available history but apply **recency weights** — recent games count more than old ones. Cutting data at 2000 would discard usable information that could instead be kept at a lower weight.
+An early concern was that data from decades ago would distort the model since squads change completely over time. The solution was to keep all available history but apply **recency weights** (recent games count more than old ones). Cutting data at 2000 would discard usable information that could instead be kept at a lower weight.
 
 **Recency weights:**
 - Last 3 years: 3.0x
@@ -186,7 +186,7 @@ An early concern was that data from decades ago would distort the model since sq
 
 ### Feature Engineering
 
-For each match, the following features were built from the training history of each team (always computed using **only** `train` data — never future data):
+For each match, the following features were built from the training history of each team (always computed using **only** `train` data and never future data):
 
 | Feature | Description |
 |---|---|
@@ -206,21 +206,21 @@ For each match, the following features were built from the training history of e
 ### Process and Lessons Learned
 
 #### Attempt 1: Random Forest
-The first model was a **Random Forest** with basic features. Result: **36% accuracy** — barely above random chance (33.3%).
+The first model was a **Random Forest** with basic features. Result: **36% accuracy** which is barely above random chance (33.3%).
 
 **Problems identified:**
 
-1. **Draws were almost never predicted.** Of 72 WC 2026 games in the test set, 38 ended in draws (53%). The model only caught 5% of them. Draws are structurally hard to predict because the average stats of two evenly matched teams look similar — which is precisely when a draw is most likely.
+1. **Draws were almost never predicted.** Of 72 WC 2026 games in the test set, 38 ended in draws (53%). The model only caught 5% of them. Draws are structurally hard to predict because the average stats of two evenly matched teams look similar, which is precisely when a draw is most likely.
 
 2. **Home advantage confound.** The training set includes matches with a real home team, where home advantage is significant. WC games are all on neutral ground. The model was learning a home advantage signal that simply doesn't exist in the tournament.
 
 #### Attempt 2: XGBoost with Incremental Retraining
 I replaced Random Forest with **XGBoost** and added incremental retraining by round: after each completed WC round, those results are added to the training set and the model is retrained before predicting the next round.
 
-Best result: **60% on Round 2** — above the typical range of professional football prediction models (50–55%).
+Best result: **60% on Round 2** which is above the typical range of professional football prediction models (50–55%).
 
 **Why was Round 3 worse?**
-The final group stage matchday has a known dynamic: teams already qualified rest key players, teams already eliminated play without pressure, and sometimes mutual draws serve both teams' interests. No model can predict this from historical data — it's a structural limitation of the sport.
+The final group stage matchday has a known dynamic: teams already qualified rest key players, teams already eliminated play without pressure, and sometimes mutual draws serve both teams' interests. No model can predict this from historical data.
 
 #### Attempt 3: Two-Stage Model
 The draw problem was addressed by splitting prediction into two separate problems:
@@ -246,7 +246,7 @@ New features added: `draw_rate`, `h2h_draw_rate`, `goal_diff`, and `is_neutral`.
 
 ### Next Steps
 
-The highest potential accuracy gain not yet implemented is **Elo Ratings** — a dynamic strength rating system that updates after every match. Expected improvement: +3 to +5 percentage points.
+The highest potential accuracy gain not yet implemented is **Elo Ratings**, a dynamic strength rating system that updates after every match. Expected improvement: +3 to +5 percentage points.
 
 Other potential improvements:
 - Poisson regression (goals-based model) combined with XGBoost in an ensemble
