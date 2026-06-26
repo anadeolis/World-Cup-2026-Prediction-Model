@@ -7,6 +7,11 @@ Para começar, estou treinando meu modelo com base em todos os jogos realizados 
 Tambem estou levando em conta eventuais mudanças nos nomes dos países.
 Além disso, estou utilizando apenas dados anteriores ao início da Copa do Mundo deste ano (2026), para que eu possa usar as partidas que já aconteceram como testes de precisão.
 
+26/06/2026
+
+Não funcinou o que eu estava fazendo primeiro, o modelo soh estava adiviando as vencidas e perdidas bem. Fora disso, tava tudo errado com os impates. Estou mudando minha forma de treinamento.
+
+
 Hello! I'm trying to preedict the world cup games
 
 First steps (06/25/2026)
